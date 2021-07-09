@@ -1,16 +1,36 @@
 #include "philo_one.h"
 
-void	check_death()
+void	locked_print_die(int i)
+{
+	t_philos	*container;
+
+	container = statlist();
+	pthread_mutex_lock(&container->writeMutex);
+	printf("%d died", (i + 1));
+}
+
+int	check_death()
 {
 	t_philos	*container;
 	int			i;
 
 	i = 0;
 	container = statlist();
-	while (i < container->philo_num)
+	while (1)
 	{
-		
+		i = 0;
+		while (i < container->philo_num)
+		{
+			if (ft_getTime() - container->all_philos[i].lastEat
+				>= (uint64_t)container->timetodie)
+			{
+				locked_print_die(i);
+				return (1);
+			}
+			i++;
+		}
 	}
+	return (0);
 }
 
 void	takefork(int id)
@@ -21,20 +41,11 @@ void	takefork(int id)
 	container = statlist();
 	if (id % 2 != 0)
 		usleep(100);
-	//container->status = check_death();
 	pthread_mutex_lock(&container->forks[id]);
-	//pthread_mutex_lock(&container->writeMutex);
-	//ft_putnbr_fd(id, 1);
-	//write(1, " has taken the first fork\n", 26);
-	printf("%d has taken the first fork\n", id);
+	locked_print("has taken the first fork\n", id);
 	tmp = (id - 1) % container->philo_num;
-	//pthread_mutex_unlock(&container->writeMutex);
 	pthread_mutex_lock(&container->forks[tmp]);
-	//pthread_mutex_lock(&container->writeMutex);
-	//ft_putnbr_fd(id, 1);
-	//write(1, " has taken the second fork\n", 27);
-	printf("%d has taken the second fork\n", id);
-	//pthread_mutex_unlock(&container->writeMutex);
+	locked_print("has taken the second fork\n", id);
 }
 
 void	dropfork(int id)
@@ -43,14 +54,10 @@ void	dropfork(int id)
 	int			tmp;
 
 	container = statlist();
-	//pthread_mutex_lock(&container->writeMutex);
-	//ft_putnbr_fd(id, 1);
-	//write(1, " is sleeping\n", 13);
-	printf("%d is sleeping\n", id);
+	locked_print("is sleeping\n", id);
 	pthread_mutex_unlock(&container->forks[id]);
 	tmp = (id - 1) % container->philo_num;
 	pthread_mutex_unlock(&container->forks[tmp]);
-	//pthread_mutex_unlock(&container->writeMutex);
 }
 
 void	eat(int id, int time)
@@ -58,15 +65,11 @@ void	eat(int id, int time)
 	t_philos	*container;
 
 	container = statlist();
-	//pthread_mutex_lock(&container->writeMutex);
-	//ft_putnbr_fd(id, 1);
-	//write(1, " is eating\n", 11);
-	printf("%d is eating\n", id);
-	//pthread_mutex_unlock(&container->writeMutex);
+	locked_print("is eating\n", id);
 	ft_sleepu(time);
 }
 
-void	ft_sleep(int time)
-{
-	ft_sleepu(time);
-}
+//void	ft_sleep(int time)
+//{
+//	ft_sleepu(time);
+//}

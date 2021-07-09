@@ -17,9 +17,11 @@ struct s_philos
 	int				timetodie;
 	int				timetoeat;
 	int				timetosleap;
+	int				time_begin;
 	int				status;
 	t_philo			*all_philos;
-	t_philo			checkdeath;
+	//pthread_t		checkdeath;
+	//pthread_mutex_t	deathmutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	writeMutex;
 	//fork and die mutex
@@ -27,34 +29,38 @@ struct s_philos
 
 struct s_philo
 {
-	pthread_t		thread_id;
-	pthread_t		death_id;
-	pthread_mutex_t	death_lock;
+	pthread_t			thread_id;
+	//pthread_t			death_id;
+	unsigned long long	lastEat;
 	//int				id;
 	//t_philos		*global;
 };
 
 //	philo funcs
-void		startPhilo(void);
-void		ft_creations(void);
-void		*begin(void *arg);
-void		takefork(int id);
-void		dropfork(int id);
-void		eat(int id, int time);
-void		ft_sleep(int time);
+int					startPhilo(void);
+int					endPhilo(void);
+int					ft_creations(void);
+void				*begin(void *arg);
+void				takefork(int id);
+void				dropfork(int id);
+void				eat(int id, int time);
+void				ft_sleep(int time);
+int					check_death();
 
 // generall functs
-int			ft_strlen(char *str);
-void		ft_sleepu(unsigned long long time);
-t_philos	*statlist(void);
-int			isAllNumber(char *str);
-int			ft_atoi(char *str);
-int			ft_error(char *str);
-void		ft_putnbr_fd(int n, int fd);
-void		ft_putchar_fd(int c, int fd);
+int					ft_strlen(char *str);
+void				ft_sleepu(unsigned long long time);
+t_philos			*statlist(void);
+int					isAllNumber(char *str);
+int					ft_atoi(char *str);
+int					ft_error(char *str);
+void				ft_putnbr_fd(int n, int fd);
+void				ft_putchar_fd(int c, int fd);
+unsigned long long	ft_getTime(void);
+void				locked_print(char	*str, int	id);
 
 // other functs
-int			checkArgs(char **argv);
-int			checkNumbers(char **argv);
+int					checkArgs(char **argv);
+int					checkNumbers(char **argv);
 
 #endif

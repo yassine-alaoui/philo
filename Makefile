@@ -4,7 +4,7 @@ NAME = lib.a
 
 EXC = philo
 
-FLAGS = -Wall -Werror -Wextra
+FLAGS = -Wall -Werror -Wextra -pthread
 
 OBJ = $(SRC:.c=.o)
 
