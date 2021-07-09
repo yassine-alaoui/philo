@@ -46,8 +46,8 @@ int	ft_atoi(char *str)
 	return (num);
 }
 
-void	ft_error(char *str)
+int	ft_error(char *str)
 {
 	write(2, str, ft_strlen(str));
-	exit (1);
+	return (1);
 }

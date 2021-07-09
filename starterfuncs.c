@@ -1,5 +1,21 @@
 #include "philo_one.h"
 
+void	ft_sleepu(unsigned long long time)
+{
+	struct timeval		tv;
+	unsigned long long	start;
+	unsigned long long	end;
+
+	gettimeofday(&tv, NULL);
+	start = (tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000);
+	end = start + time;
+	while (((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000)) < end)
+	{
+		usleep(100);
+		gettimeofday(&tv, NULL);
+	}
+}
+
 void	*begin(void *arg)
 {
 	int			i;
@@ -7,10 +23,13 @@ void	*begin(void *arg)
 
 	container = statlist();
 	i = *(int *)arg;
-	takefork(i);
-	eat(i, container->timetoeat);
-	ft_sleep(container->timetosleap);
-	dropfork(i);
+	while (container->status == 0)
+	{
+		takefork(i);
+		eat(i, container->timetoeat);
+		ft_sleep(container->timetosleap);
+		dropfork(i);
+	}
 	return (0);
 }
 
@@ -22,7 +41,8 @@ void	ft_creations(void)
 
 	container = statlist();
 	i = 0;
-	pthread_mutex_init(&container->writeMutex, NULL);
+	//pthread_mutex_init(&container->writeMutex, NULL);
+	pthread_create(&container->checkdeath, NULL, &check_death, NULL);
 	while (i < container->philo_num)
 		pthread_mutex_init(&container->forks[i++], NULL);
 	i = 0;
@@ -33,7 +53,6 @@ void	ft_creations(void)
 		if (pthread_create(&container->all_philos[i].thread_id,
 				NULL, &begin, a) != 0)
 			free(container->all_philos), ft_error("Failed to create a thread\n");
-		usleep(100);
 		i++;
 	}
 }
@@ -45,6 +64,7 @@ void	startPhilo(void)
 
 	i = 0;
 	container = statlist();
+	container->status = 0;
 	container->all_philos = malloc(sizeof(t_philo) * container->philo_num);
 	container->forks = malloc(sizeof(pthread_mutex_t) * container->philo_num);
 	ft_creations();

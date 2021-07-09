@@ -31,7 +31,9 @@ int	main(int argc, char **argv)
 		write(2, "Wrong number of arguments!\n", 27);
 		return (1);
 	}
-	checkArgs(argv);
-	checkNumbers(argv);
+	if (checkArgs(argv))
+		return (1);
+	if (checkNumbers(argv))
+		return (1);
 	startPhilo();
 }
