@@ -20,11 +20,15 @@ void	*begin(void *arg)
 
 	container = statlist();
 	i = *(int *)arg;
+	container->all_philos[i].ate = 0;
 	while (1)
 	{
 		takefork(i);
+		//pthread_mutex_lock(&container->writeMutex);
+		//container->all_philos[i].ate++;
+		//printf("%d\n", container->all_philos[i].ate);
+		//pthread_mutex_unlock(&container->writeMutex);
 		eat(i, container->timetoeat);
-		container->all_philos[i].lastEat = ft_getTime();
 		dropfork(i);
 		ft_sleepu(container->timetosleap);
 	}
@@ -55,6 +59,7 @@ int	ft_creations(void)
 			free(container->all_philos);
 			return (ft_error("Failed to create a thread\n"));
 		}
+		usleep(100);
 		i++;
 	}
 	//pthread_create(&container->checkdeath, NULL, &check_death, NULL);
@@ -84,9 +89,9 @@ int	startPhilo(void)
 
 	i = 0;
 	container = statlist();
-	container->status = 0;
 	container->all_philos = malloc(sizeof(t_philo) * container->philo_num);
 	container->forks = malloc(sizeof(pthread_mutex_t) * container->philo_num);
+	container->mustEat = 0;
 	if (ft_creations())
 		return (1);
 	return (0);

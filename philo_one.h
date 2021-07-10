@@ -10,30 +10,23 @@
 typedef struct s_philos	t_philos;
 typedef struct s_philo	t_philo;
 
-// status = 0 eat 1 sleep 2 think 3 dies
 struct s_philos
 {
 	int				philo_num;
 	int				timetodie;
 	int				timetoeat;
 	int				timetosleap;
-	int				time_begin;
-	int				status;
+	int				mustEat;
 	t_philo			*all_philos;
-	//pthread_t		checkdeath;
-	//pthread_mutex_t	deathmutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	writeMutex;
-	//fork and die mutex
 };
 
 struct s_philo
 {
 	pthread_t			thread_id;
-	//pthread_t			death_id;
+	int					ate;
 	unsigned long long	lastEat;
-	//int				id;
-	//t_philos		*global;
 };
 
 //	philo funcs
@@ -44,7 +37,6 @@ void				*begin(void *arg);
 void				takefork(int id);
 void				dropfork(int id);
 void				eat(int id, int time);
-void				ft_sleep(int time);
 int					check_death();
 
 // generall functs

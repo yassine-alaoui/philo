@@ -23,8 +23,8 @@ int	checkNumbers(char **argv)
 
 	container = statlist();
 	container->philo_num = ft_atoi(argv[1]);
-	if (container->philo_num > 255)
-		return (ft_error("More 255 philosofers\n"));
+	if (container->philo_num > 200 || container->philo_num < 1)
+		return (ft_error("More 200 philosofers or None\n"));
 	container->timetodie = ft_atoi(argv[2]);
 	if (container->timetodie < 60)
 		return (ft_error("Lower than 60 2nd arg\n"));
@@ -34,5 +34,13 @@ int	checkNumbers(char **argv)
 	container->timetosleap = ft_atoi(argv[4]);
 	if (container->timetosleap < 60)
 		return (ft_error("Lower than 60 4th arg\n"));
+	if (argv[5])
+	{
+		container->mustEat = ft_atoi(argv[5]);
+		if (container->timetosleap < 0)
+			return (ft_error("Negative 5th arg\n"));
+	}
+	//else
+	//	container->mustEat = -1;
 	return (0);
 }
