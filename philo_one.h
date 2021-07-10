@@ -17,6 +17,7 @@ struct s_philos
 	int				timetoeat;
 	int				timetosleap;
 	int				mustEat;
+	int				done;
 	t_philo			*all_philos;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	writeMutex;
@@ -25,7 +26,9 @@ struct s_philos
 struct s_philo
 {
 	pthread_t			thread_id;
+	pthread_mutex_t		eating;
 	int					ate;
+	int					iseating;
 	unsigned long long	lastEat;
 };
 
@@ -37,7 +40,7 @@ void				*begin(void *arg);
 void				takefork(int id);
 void				dropfork(int id);
 void				eat(int id, int time);
-int					check_death();
+int					check_death(void);
 
 // generall functs
 int					ft_strlen(char *str);

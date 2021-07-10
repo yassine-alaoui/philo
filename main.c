@@ -6,13 +6,13 @@ void	locked_print(char	*str, int	id)
 
 	container = statlist();
 	pthread_mutex_lock(&container->writeMutex);
-	printf("%lld %d %s", ft_getTime() , (id + 1), str);
+	printf("%lld %d %s", ft_getTime(), (id + 1), str);
 	pthread_mutex_unlock(&container->writeMutex);
 }
 
 unsigned long long	ft_getTime(void)
 {
-	struct	timeval	tv;
+	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));

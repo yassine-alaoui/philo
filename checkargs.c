@@ -37,10 +37,10 @@ int	checkNumbers(char **argv)
 	if (argv[5])
 	{
 		container->mustEat = ft_atoi(argv[5]);
-		if (container->timetosleap < 0)
-			return (ft_error("Negative 5th arg\n"));
+		if (container->mustEat <= 0)
+			return (ft_error("Negative or Null 5th arg\n"));
 	}
-	//else
-	//	container->mustEat = -1;
+	else if (!argv[5])
+		container->mustEat = -1;
 	return (0);
 }

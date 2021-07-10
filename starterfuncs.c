@@ -21,16 +21,20 @@ void	*begin(void *arg)
 	container = statlist();
 	i = *(int *)arg;
 	container->all_philos[i].ate = 0;
+	container->all_philos[i].iseating = 0;
+	if (i % 2)
+		usleep(100);
 	while (1)
 	{
+		if (container->mustEat > 0 && container->all_philos[i].ate
+			== container->mustEat)
+			container->done++;
 		takefork(i);
-		//pthread_mutex_lock(&container->writeMutex);
-		//container->all_philos[i].ate++;
-		//printf("%d\n", container->all_philos[i].ate);
-		//pthread_mutex_unlock(&container->writeMutex);
+		container->all_philos[i].ate++;
 		eat(i, container->timetoeat);
 		dropfork(i);
 		ft_sleepu(container->timetosleap);
+		locked_print("is thinking\n", i);
 	}
 	return (0);
 }
@@ -44,9 +48,9 @@ int	ft_creations(void)
 	container = statlist();
 	i = 0;
 	pthread_mutex_init(&container->writeMutex, NULL);
-	//pthread_mutex_init(&container->deathmutex, NULL);
 	while (i < container->philo_num)
-		pthread_mutex_init(&container->forks[i++], NULL);
+		pthread_mutex_init(&container->forks[i], NULL),
+		pthread_mutex_init(&container->all_philos[i++].eating, NULL);
 	i = 0;
 	while (i < container->philo_num)
 	{
@@ -59,10 +63,8 @@ int	ft_creations(void)
 			free(container->all_philos);
 			return (ft_error("Failed to create a thread\n"));
 		}
-		usleep(100);
 		i++;
 	}
-	//pthread_create(&container->checkdeath, NULL, &check_death, NULL);
 	return (0);
 }
 
@@ -74,11 +76,13 @@ int	endPhilo(void)
 	i = 0;
 	container = statlist();
 	while (i < container->philo_num)
+	{
 		if (pthread_join(container->all_philos[i++].thread_id, NULL) != 0)
 		{
 			free(container->all_philos);
 			return (ft_error("Failed to join a thread\n"));
 		}
+	}
 	return (0);
 }
 
@@ -91,7 +95,7 @@ int	startPhilo(void)
 	container = statlist();
 	container->all_philos = malloc(sizeof(t_philo) * container->philo_num);
 	container->forks = malloc(sizeof(pthread_mutex_t) * container->philo_num);
-	container->mustEat = 0;
+	container->done = 0;
 	if (ft_creations())
 		return (1);
 	return (0);
